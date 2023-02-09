@@ -1,6 +1,6 @@
 import telebot, sqlite3
 from telebot import types
-from config.id import button_list, shop
+from config.id import button_list, faq_text, contact_info
 from config.token import bot
 
 
@@ -43,38 +43,9 @@ def main_menu(message):
                              reply_markup=markup, parse_mode='html', disable_web_page_preview=True)
 
         elif message.text == button_list['faq']:
-            faq_text = f"""
-❔ *Часто задаваемые вопросы*
-
-\- Почему такие *низкие цены*?
-
-Мы закупаем товары у *оптовых поставщиков* и размещаем обьявления с *наименьшим* процентом,
-отчего стоимость товаров гораздо *ниже рыночной*\.
-
-\- Есть ли *риск потерять деньги* и не получить товар?
-
-Пользуясь нашими услугами вы *не рискуете* ни чем\. Процесс куплепродажи происходит в рамках популярного
-в России маркетплейс\-сайта *Avito*\.
-
-\- Что делать если ссылка на товар *не работает*?
-
-В некоторых случаях *Avito* не позволяет нам выставлять некоторые *товары*, поэтому *если вам приглянулся
-товар*, но ссылка недействительна, *просьба писать в ЛС* [менеджерам](https://t.me/septemshop_manager)
-
-\- Можно ли где\-то *оставить отзыв*?
-
-Отзывы о наших услугах вы можете *прочесть/оставить* на нашем [аккаунте]({shop}) маркетплейс\-сайта *Avito*\.
-            """
             bot.send_message(message.chat.id, faq_text, parse_mode='MarkdownV2', disable_web_page_preview=True)
 
         elif message.text == button_list['contacts']:
-            contact_info = """
-<b>Контактная информация</b>
-
-По всем вопросам обращаться к администраторам
-
-@Septemshop_manager либо @septemshop_tech
-            """
             bot.send_message(message.chat.id, contact_info, parse_mode='html')
 
         # BACK TO MENU
