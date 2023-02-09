@@ -263,30 +263,34 @@ def refs(call):
     # PERF
     # MONITOR
     if call.data == 'ref/item1':
-        item_text = f'<b>{button_list["item1"]}</b>\n\n{button_list["item1_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list["item1_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list["item1_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open('media/images/perf/monitor/item1.png', 'rb'),
+        id_ = '1'
+        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
+                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
+                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
+        bot.send_photo(call.message.chat.id, open(f'media/images/perf/monitor/item{id_}.jpg', 'rb'),
                        parse_mode='html', caption=item_text)
     elif call.data == 'ref/item2':
-        item_text = f'<b>{button_list["item2"]}</b>\n\n{button_list["item2_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list["item2_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list["item2_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open('media/images/perf/monitor/item2.jpg', 'rb'),
+        id_ = '3'
+        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
+                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
+                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
+        bot.send_photo(call.message.chat.id, open(f'media/images/perf/monitor/item{id_}.jpg', 'rb'),
                        parse_mode='html', caption=item_text)
 
     # KEYBOARD
     elif call.data == 'ref/item3':
-        item_text = f'<b>{button_list["item3"]}</b>\n\n{button_list["item3_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list["item3_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list["item3_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open('media/images/perf/keyboard/item3.jpg', 'rb'),
+        id_ = '3'
+        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
+                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
+                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
+        bot.send_photo(call.message.chat.id, open(f'media/images/perf/keyboard/item{id_}.jpg', 'rb'),
                        parse_mode='html', caption=item_text)
     elif call.data == 'ref/item8':
-        item_text = f'<b>{button_list["item8"]}</b>\n\n{button_list["item8_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list["item8_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list["item8_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open('media/images/perf/keyboard/item8.jpg', 'rb'),
+        id_ = '8'
+        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
+                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
+                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
+        bot.send_photo(call.message.chat.id, open(f'media/images/perf/keyboard/item{id_}.jpg', 'rb'),
                        parse_mode='html', caption=item_text)
 
     # HEADPHONES
