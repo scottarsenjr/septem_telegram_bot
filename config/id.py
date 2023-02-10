@@ -3,6 +3,18 @@ import sqlite3
 # URLS
 shop = 'https://www.avito.ru/user/fe04ff3c91b5db23fdbdd34e83d3be05/profile?id=2779976873&src=item&page_from=from_item_card&iid=2779976873/'
 
+search_text = f"""
+<b>🔎 Поиск товара по названию или ID</b>
+
+Чтобы найти необходимый вам товар, отправьте боту сообщение в виде индивидуального
+идентификатора <b>ID</b> или <b>названия</b>.
+
+<b><u>Пример</u></b>:
+"ID<b>3</b>" => "Клавиатура HyperX Alloy Origins Core TKL механическая черный USB for gamer LED"
+
+"Монитор Acer" => "Монитор 23,8" acer Nitro QG241YPbmiipx 165hz"
+"""
+
 faq_text = f"""
 ❔ *Часто задаваемые вопросы*
 
@@ -51,8 +63,12 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Products(
 button_list = {
     # MAIN MENU
     'products': '🛒 Товары',
+    'search': '🔎 Найти товар',
     'faq': '🤔 Часто задаваемые вопросы',
     'contacts': '☎️ Контакты',
+
+    # SEARCH
+    'return': '↵ Вернуться в главное меню',
 
     # BACK BUTTONS
     'main_menu': '↵ В главное меню',
@@ -89,127 +105,31 @@ button_list = {
 
     # SUB CATEGORIES (FURN)
     'chair': '🪑 Кресла',
-
-    # PERF
-    'item1': str(*cursor.execute('SELECT name FROM Products WHERE id = 1').fetchone()),
-    'item1_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 1').fetchone()),
-    'item1_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 1').fetchone()),
-    'item1_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 1').fetchone()),
-
-    'item2': str(*cursor.execute('SELECT name FROM Products WHERE id = 2').fetchone()),
-    'item2_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 2').fetchone()),
-    'item2_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 2').fetchone()),
-    'item2_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 2').fetchone()),
-
-    'item3': str(*cursor.execute('SELECT name FROM Products WHERE id = 3').fetchone()),
-    'item3_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 3').fetchone()),
-    'item3_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 3').fetchone()),
-    'item3_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 3').fetchone()),
-
-    'item23': str(*cursor.execute('SELECT name FROM Products WHERE id = 23').fetchone()),
-    'item23_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 23').fetchone()),
-    'item23_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 23').fetchone()),
-    'item23_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 23').fetchone()),
-
-    'item24': str(*cursor.execute('SELECT name FROM Products WHERE id = 24').fetchone()),
-    'item24_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 24').fetchone()),
-    'item24_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 24').fetchone()),
-    'item24_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 24').fetchone()),
-
-    # COMP MINING
-    'item4': str(*cursor.execute('SELECT name FROM Products WHERE id = 4').fetchone()),
-    'item4_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 4').fetchone()),
-    'item4_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 4').fetchone()),
-    'item4_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 4').fetchone()),
-
-    'item5': str(*cursor.execute('SELECT name FROM Products WHERE id = 5').fetchone()),
-    'item5_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 5').fetchone()),
-    'item5_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 5').fetchone()),
-    'item5_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 5').fetchone()),
-
-    # COMP PC
-    'item9': str(*cursor.execute('SELECT name FROM Products WHERE id = 9').fetchone()),
-    'item9_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 9').fetchone()),
-    'item9_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 9').fetchone()),
-    'item9_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 9').fetchone()),
-
-    'item10': str(*cursor.execute('SELECT name FROM Products WHERE id = 10').fetchone()),
-    'item10_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 10').fetchone()),
-    'item10_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 10').fetchone()),
-    'item10_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 10').fetchone()),
-
-    'item11': str(*cursor.execute('SELECT name FROM Products WHERE id = 11').fetchone()),
-    'item11_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 11').fetchone()),
-    'item11_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 11').fetchone()),
-    'item11_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 11').fetchone()),
-
-    'item12': str(*cursor.execute('SELECT name FROM Products WHERE id = 12').fetchone()),
-    'item12_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 12').fetchone()),
-    'item12_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 12').fetchone()),
-    'item12_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 12').fetchone()),
-
-    'item13': str(*cursor.execute('SELECT name FROM Products WHERE id = 13').fetchone()),
-    'item13_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 13').fetchone()),
-    'item13_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 13').fetchone()),
-    'item13_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 13').fetchone()),
-
-    'item14': str(*cursor.execute('SELECT name FROM Products WHERE id = 14').fetchone()),
-    'item14_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 14').fetchone()),
-    'item14_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 14').fetchone()),
-    'item14_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 14').fetchone()),
-
-    'item15': str(*cursor.execute('SELECT name FROM Products WHERE id = 15').fetchone()),
-    'item15_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 15').fetchone()),
-    'item15_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 15').fetchone()),
-    'item15_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 15').fetchone()),
-
-    'item16': str(*cursor.execute('SELECT name FROM Products WHERE id = 16').fetchone()),
-    'item16_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 16').fetchone()),
-    'item16_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 16').fetchone()),
-    'item16_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 16').fetchone()),
-
-    'item17': str(*cursor.execute('SELECT name FROM Products WHERE id = 17').fetchone()),
-    'item17_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 17').fetchone()),
-    'item17_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 17').fetchone()),
-    'item17_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 17').fetchone()),
-
-    'item18': str(*cursor.execute('SELECT name FROM Products WHERE id = 18').fetchone()),
-    'item18_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 18').fetchone()),
-    'item18_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 18').fetchone()),
-    'item18_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 18').fetchone()),
-
-    'item19': str(*cursor.execute('SELECT name FROM Products WHERE id = 19').fetchone()),
-    'item19_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 19').fetchone()),
-    'item19_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 19').fetchone()),
-    'item19_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 19').fetchone()),
-
-    'item20': str(*cursor.execute('SELECT name FROM Products WHERE id = 20').fetchone()),
-    'item20_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 20').fetchone()),
-    'item20_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 20').fetchone()),
-    'item20_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 20').fetchone()),
-
-    'item21': str(*cursor.execute('SELECT name FROM Products WHERE id = 21').fetchone()),
-    'item21_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 21').fetchone()),
-    'item21_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 21').fetchone()),
-    'item21_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 21').fetchone()),
-
-    'item22': str(*cursor.execute('SELECT name FROM Products WHERE id = 22').fetchone()),
-    'item22_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 22').fetchone()),
-    'item22_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 22').fetchone()),
-    'item22_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 22').fetchone()),
-
-    # GAME DEVICES
-    'item6': str(*cursor.execute('SELECT name FROM Products WHERE id = 6').fetchone()),
-    'item6_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 6').fetchone()),
-    'item6_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 6').fetchone()),
-    'item6_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 6').fetchone()),
-
-    # FURN
-    'item7': str(*cursor.execute('SELECT name FROM Products WHERE id = 7').fetchone()),
-    'item7_desc': str(*cursor.execute('SELECT description FROM Products WHERE id = 7').fetchone()),
-    'item7_price': str(*cursor.execute('SELECT price FROM Products WHERE id = 7').fetchone()),
-    'item7_ref': str(*cursor.execute('SELECT ref FROM Products WHERE id = 7').fetchone()),
-
 }
 
 connect.commit()
+
+item_name = {}
+amount = 25
+for i in range(1, amount):
+    values = [f'item{str(i)}', str(*cursor.execute(f'SELECT name FROM Products WHERE id = {i}').fetchone())]
+    item_name.update([values])
+
+
+item_desc = {}
+for i in range(1, amount):
+    values = [f'item{str(i)}_desc',  str(*cursor.execute(f'SELECT description FROM Products WHERE id = {i}').fetchone())]
+    item_desc.update([values])
+
+
+item_price = {}
+for i in range(1, amount):
+    values = [f'item{str(i)}_price', str(*cursor.execute(f'SELECT price FROM Products WHERE id = {i}').fetchone())]
+    item_price.update([values])
+
+
+item_ref = {}
+for i in range(1, amount):
+    values = [f'item{str(i)}_ref', str(*cursor.execute(f'SELECT ref FROM Products WHERE id = {i}').fetchone())]
+    item_ref.update([values])
+

@@ -1,6 +1,6 @@
 import telebot, sqlite3
 from telebot import types
-from config.id import button_list, faq_text, contact_info
+from config.id import button_list, faq_text, contact_info, search_text, item_name, item_desc, item_price, item_ref
 from config.token import bot
 
 
@@ -9,10 +9,11 @@ def start(message):
     # Menu Appear
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
     products = types.KeyboardButton(button_list['products'])
+    search = types.KeyboardButton(button_list['search'])
     faq = types.KeyboardButton(button_list['faq'])
     contacts = types.KeyboardButton(button_list['contacts'])
 
-    markup.add(products, faq, contacts)
+    markup.add(products, search, faq, contacts)
 
     # Greeting
     greet = f'Добро пожаловать в <b>Septem Shop</b> 🔥 <u>{message.from_user.first_name}</u>!\n'
@@ -21,7 +22,7 @@ def start(message):
                        parse_mode='html', reply_markup=markup)
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(content_types=['text'], func=lambda message: True)
 def main_menu(message):
     if message.chat.type == 'private':
         # MAIN
@@ -42,6 +43,12 @@ def main_menu(message):
                                               ' и мы <b>добавим ваш товар</b>',
                              reply_markup=markup, parse_mode='html', disable_web_page_preview=True)
 
+        elif message.text == button_list['search']:
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+            return_ = types.KeyboardButton(button_list['return'])
+            markup.add(return_)
+            bot.send_message(message.chat.id, search_text, reply_markup=markup, parse_mode='html')
+
         elif message.text == button_list['faq']:
             bot.send_message(message.chat.id, faq_text, parse_mode='MarkdownV2', disable_web_page_preview=True)
 
@@ -49,13 +56,30 @@ def main_menu(message):
             bot.send_message(message.chat.id, contact_info, parse_mode='html')
 
         # BACK TO MENU
-        elif message.text == button_list['main_menu']:
+        elif message.text == button_list['return']:
+            bot.send_message(message.chat.id, 'Пожалуйста, подождите.')
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
             products = types.KeyboardButton(button_list['products'])
+            search = types.KeyboardButton(button_list['search'])
             faq = types.KeyboardButton(button_list['faq'])
             contacts = types.KeyboardButton(button_list['contacts'])
 
-            markup.add(products, faq, contacts)
+            markup.add(products, search, faq, contacts)
+
+            greet = f'Добро пожаловать в <b>Septem Shop</b> 🔥 <u>{message.from_user.first_name}</u>!\n'
+            bot.send_chat_action(message.chat.id, 'typing')
+            bot.send_animation(message.chat.id, open('media/gif/septemshopgif.gif', 'rb'), caption=greet,
+                               parse_mode='html', reply_markup=markup)
+
+        elif message.text == button_list['main_menu']:
+            bot.send_message(message.chat.id, 'Пожалуйста подождите.')
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+            products = types.KeyboardButton(button_list['products'])
+            search = types.KeyboardButton(button_list['search'])
+            faq = types.KeyboardButton(button_list['faq'])
+            contacts = types.KeyboardButton(button_list['contacts'])
+
+            markup.add(products, search, faq, contacts)
 
             greet = f'Добро пожаловать в <b>Septem Shop</b> 🔥 <u>{message.from_user.first_name}</u>!\n'
             bot.send_chat_action(message.chat.id, 'typing')
@@ -78,22 +102,22 @@ def main_menu(message):
     # PERF SUB-MENU
     if message.text == button_list['monitor']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item1 = types.InlineKeyboardButton(text=button_list['item1'], callback_data='ref/item1')
-        item2 = types.InlineKeyboardButton(text=button_list['item2'], callback_data='ref/item2')
+        item1 = types.InlineKeyboardButton(text=item_name['item1'], callback_data='ref/item1')
+        item2 = types.InlineKeyboardButton(text=item_name['item2'], callback_data='ref/item2')
         main.add(item1, item2)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['keyboard']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item3 = types.InlineKeyboardButton(text=button_list['item3'], callback_data='ref/item3')
-        item8 = types.InlineKeyboardButton(text=button_list['item8'], callback_data='ref/item8')
+        item3 = types.InlineKeyboardButton(text=item_name['item3'], callback_data='ref/item3')
+        item8 = types.InlineKeyboardButton(text=item_name['item8'], callback_data='ref/item8')
         main.add(item3, item8)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['headphones']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item23 = types.InlineKeyboardButton(text=button_list['item23'], callback_data='ref/item23')
-        item24 = types.InlineKeyboardButton(text=button_list['item24'], callback_data='ref/item24')
+        item23 = types.InlineKeyboardButton(text=item_name['item23'], callback_data='ref/item23')
+        item24 = types.InlineKeyboardButton(text=item_name['item24'], callback_data='ref/item24')
         main.add(item23, item24)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
@@ -134,42 +158,42 @@ def main_menu(message):
     # PC SUB-MENU (COMP)
     if message.text == button_list['processor']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item9 = types.InlineKeyboardButton(text=button_list['item9'], callback_data='ref/item9')
+        item9 = types.InlineKeyboardButton(text=item_name['item9'], callback_data='ref/item9')
         main.add(item9)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['videocard']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item10 = types.InlineKeyboardButton(text=button_list['item10'], callback_data='ref/item10')
-        item12 = types.InlineKeyboardButton(text=button_list['item12'], callback_data='ref/item12')
-        item14 = types.InlineKeyboardButton(text=button_list['item14'], callback_data='ref/item14')
-        item21 = types.InlineKeyboardButton(text=button_list['item21'], callback_data='ref/item21')
-        item22 = types.InlineKeyboardButton(text=button_list['item22'], callback_data='ref/item22')
+        item10 = types.InlineKeyboardButton(text=item_name['item10'], callback_data='ref/item10')
+        item12 = types.InlineKeyboardButton(text=item_name['item12'], callback_data='ref/item12')
+        item14 = types.InlineKeyboardButton(text=item_name['item14'], callback_data='ref/item14')
+        item21 = types.InlineKeyboardButton(text=item_name['item21'], callback_data='ref/item21')
+        item22 = types.InlineKeyboardButton(text=item_name['item22'], callback_data='ref/item22')
         main.add(item10, item12, item14, item21, item22)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['motherboard']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item11 = types.InlineKeyboardButton(text=button_list['item11'], callback_data='ref/item11')
-        item15 = types.InlineKeyboardButton(text=button_list['item15'], callback_data='ref/item15')
-        item16 = types.InlineKeyboardButton(text=button_list['item16'], callback_data='ref/item16')
-        item17 = types.InlineKeyboardButton(text=button_list['item17'], callback_data='ref/item17')
-        item18 = types.InlineKeyboardButton(text=button_list['item18'], callback_data='ref/item18')
-        item19 = types.InlineKeyboardButton(text=button_list['item19'], callback_data='ref/item19')
-        item20 = types.InlineKeyboardButton(text=button_list['item20'], callback_data='ref/item20')
+        item11 = types.InlineKeyboardButton(text=item_name['item11'], callback_data='ref/item11')
+        item15 = types.InlineKeyboardButton(text=item_name['item15'], callback_data='ref/item15')
+        item16 = types.InlineKeyboardButton(text=item_name['item16'], callback_data='ref/item16')
+        item17 = types.InlineKeyboardButton(text=item_name['item17'], callback_data='ref/item17')
+        item18 = types.InlineKeyboardButton(text=item_name['item18'], callback_data='ref/item18')
+        item19 = types.InlineKeyboardButton(text=item_name['item19'], callback_data='ref/item19')
+        item20 = types.InlineKeyboardButton(text=item_name['item20'], callback_data='ref/item20')
         main.add(item11, item15, item16, item17, item18, item19, item20)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     # MINING SUB-MENU (COMP)
     if message.text == button_list['motherboard_mining']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item4 = types.InlineKeyboardButton(text=button_list['item4'], callback_data='ref/item4')
+        item4 = types.InlineKeyboardButton(text=item_name['item4'], callback_data='ref/item4')
         main.add(item4)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['case_mining']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item5 = types.InlineKeyboardButton(text=button_list['item5'], callback_data='ref/item5')
+        item5 = types.InlineKeyboardButton(text=item_name['item5'], callback_data='ref/item5')
         main.add(item5)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
@@ -186,7 +210,7 @@ def main_menu(message):
     # GAME DEVICE SUB-MENU
     if message.text == button_list['gamepad']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item6 = types.InlineKeyboardButton(text=button_list['item6'], callback_data='ref/item6')
+        item6 = types.InlineKeyboardButton(text=item_name['item6'], callback_data='ref/item6')
         main.add(item6)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
@@ -202,7 +226,7 @@ def main_menu(message):
     # FURN SUB-MENU
     if message.text == button_list['chair']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item7 = types.InlineKeyboardButton(text=button_list['item7'], callback_data='ref/item7')
+        item7 = types.InlineKeyboardButton(text=item_name['item7'], callback_data='ref/item7')
         main.add(item7)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
@@ -229,230 +253,29 @@ def main_menu(message):
                          parse_mode='html', reply_markup=markup)
 
 
+def request(message):
+    request = message.text
+    bot.send_message(message.chat.id, request)
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def refs(call):
-    # PERF
-    # MONITOR
-    if call.data == 'ref/item1':
-        id_ = '1'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/perf/monitor/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-    elif call.data == 'ref/item2':
-        id_ = '3'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/perf/monitor/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-
-    # KEYBOARD
-    elif call.data == 'ref/item3':
-        id_ = '3'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/perf/keyboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-    elif call.data == 'ref/item8':
-        id_ = '8'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/perf/keyboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-
-    # HEADPHONES
-    elif call.data == 'ref/item23':
-        id_ = '23'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/perf/headphones/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-    elif call.data == 'ref/item24':
-        id_ = '24'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/perf/headphones/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-
-    # COMP (MINING)
-    if call.data == 'ref/item4':
-        item_text = f'<b>{button_list["item4"]}</b>\n\n{button_list["item4_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list["item4_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list["item4_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open('media/images/comp/mining/item4.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-
-    elif call.data == 'ref/item5':
-        item_text = f'<b>{button_list["item5"]}</b>\n\n{button_list["item5_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list["item5_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list["item5_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open('media/images/comp/mining/item5.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-    # COMP (PC)
-    # PROCESSOR
-    if call.data == 'ref/item9':
-        id_ = '9'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/processor/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-
-    # VIDEOCARD
-    elif call.data == 'ref/item10':
-        id_ = '10'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/videocard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item12':
-        id_ = '12'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/videocard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item14':
-        id_ = '14'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/videocard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item21':
-        id_ = '21'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/videocard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item22':
-        id_ = '9'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/videocard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    # MOTHERBOARD
-    elif call.data == 'ref/item11':
-        id_ = '11'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/motherboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item15':
-        id_ = '15'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                    f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                    f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/motherboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item16':
-        id_ = '16'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                    f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                    f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/motherboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item17':
-        id_ = '17'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                    f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                    f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/motherboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item18':
-        id_ = '18'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                    f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                    f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/motherboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item19':
-        id_ = '19'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                    f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                    f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/motherboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    elif call.data == 'ref/item20':
-        id_ = '20'
-        item_text = f'<b>{button_list[f"item{id_}"]}</b>\n\n{button_list[f"item{id_}_desc"]}\n\n' \
-                    f'<b>Цена:</b> {button_list[f"item{id_}_price"]} ₽\n\n' \
-                    f'<b><a href="{button_list[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open(f'media/images/comp/pc/motherboard/item{id_}.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-        bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
-                                               f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
-                         parse_mode='html')
-
-    # GAME DEVICE
-    if call.data == 'ref/item6':
-        item_text = f'<b>{button_list["item6"]}</b>\n\n{button_list["item6_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list["item6_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list["item6_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open('media/images/gaming_devices/gamepad/item6.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
-
-    # FURN
-    if call.data == 'ref/item7':
-        item_text = f'<b>{button_list["item7"]}</b>\n\n{button_list["item7_desc"]}\n\n' \
-                     f'<b>Цена:</b> {button_list["item7_price"]} ₽\n\n' \
-                     f'<b><a href="{button_list["item7_ref"]}">Ссылка на товар</a></b>'
-        bot.send_photo(call.message.chat.id, open('media/images/furn/chair/item7.jpg', 'rb'),
-                       parse_mode='html', caption=item_text)
+    products = 25
+    for i in range(1, products):
+        if call.data == f'ref/item{str(i)}':
+            id_ = str(i)
+            item_text = f'<b>{item_name[f"item{id_}"]}</b>\n\n{item_desc[f"item{id_}_desc"]}\n\n' \
+                         f'<b>Цена:</b> {item_price[f"item{id_}_price"]} ₽\n\n' \
+                         f'<b><a href="{item_ref[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
+            if item_ref[f"item{id_}_ref"] != '':
+                bot.send_photo(call.message.chat.id, open(f'media/images/item{id_}.jpg', 'rb'),
+                               parse_mode='html', caption=item_text)
+            else:
+                bot.send_photo(call.message.chat.id, open(f'media/images/item{id_}.jpg', 'rb'),
+                               parse_mode='html', caption=item_text)
+                bot.send_message(call.message.chat.id, f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
+                                                       f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
+                                 parse_mode='html')
 
     bot.answer_callback_query(callback_query_id=call.id)
 
