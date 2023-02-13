@@ -1,6 +1,7 @@
 import telebot, sqlite3
 from telebot import types
-from config.id import button_list, faq_text, contact_info, search_text, item_name, item_desc, item_price, item_ref
+from config.id import button_list, faq_text,\
+    contact_info, search_text, item_name, item_desc, item_price, item_ref, amount, product_list
 from config.token import bot
 
 
@@ -47,7 +48,8 @@ def main_menu(message):
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             return_ = types.KeyboardButton(button_list['return'])
             markup.add(return_)
-            bot.send_message(message.chat.id, search_text, reply_markup=markup, parse_mode='html')
+            send = bot.send_message(message.chat.id, search_text, parse_mode='html', reply_markup=markup)
+            bot.register_next_step_handler(send, search_func)
 
         elif message.text == button_list['faq']:
             bot.send_message(message.chat.id, faq_text, parse_mode='MarkdownV2', disable_web_page_preview=True)
@@ -102,23 +104,44 @@ def main_menu(message):
     # PERF SUB-MENU
     if message.text == button_list['monitor']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item1 = types.InlineKeyboardButton(text=item_name['item1'], callback_data='ref/item1')
-        item2 = types.InlineKeyboardButton(text=item_name['item2'], callback_data='ref/item2')
-        main.add(item1, item2)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Монитор"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['keyboard']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item3 = types.InlineKeyboardButton(text=item_name['item3'], callback_data='ref/item3')
-        item8 = types.InlineKeyboardButton(text=item_name['item8'], callback_data='ref/item8')
-        main.add(item3, item8)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Клавиатура"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['headphones']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item23 = types.InlineKeyboardButton(text=item_name['item23'], callback_data='ref/item23')
-        item24 = types.InlineKeyboardButton(text=item_name['item24'], callback_data='ref/item24')
-        main.add(item23, item24)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Наушники"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     # COMP MENU
@@ -158,43 +181,73 @@ def main_menu(message):
     # PC SUB-MENU (COMP)
     if message.text == button_list['processor']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item9 = types.InlineKeyboardButton(text=item_name['item9'], callback_data='ref/item9')
-        main.add(item9)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Процессор"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['videocard']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item10 = types.InlineKeyboardButton(text=item_name['item10'], callback_data='ref/item10')
-        item12 = types.InlineKeyboardButton(text=item_name['item12'], callback_data='ref/item12')
-        item14 = types.InlineKeyboardButton(text=item_name['item14'], callback_data='ref/item14')
-        item21 = types.InlineKeyboardButton(text=item_name['item21'], callback_data='ref/item21')
-        item22 = types.InlineKeyboardButton(text=item_name['item22'], callback_data='ref/item22')
-        main.add(item10, item12, item14, item21, item22)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Видеокарта"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['motherboard']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item11 = types.InlineKeyboardButton(text=item_name['item11'], callback_data='ref/item11')
-        item15 = types.InlineKeyboardButton(text=item_name['item15'], callback_data='ref/item15')
-        item16 = types.InlineKeyboardButton(text=item_name['item16'], callback_data='ref/item16')
-        item17 = types.InlineKeyboardButton(text=item_name['item17'], callback_data='ref/item17')
-        item18 = types.InlineKeyboardButton(text=item_name['item18'], callback_data='ref/item18')
-        item19 = types.InlineKeyboardButton(text=item_name['item19'], callback_data='ref/item19')
-        item20 = types.InlineKeyboardButton(text=item_name['item20'], callback_data='ref/item20')
-        main.add(item11, item15, item16, item17, item18, item19, item20)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Материнская плата"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     # MINING SUB-MENU (COMP)
     if message.text == button_list['motherboard_mining']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item4 = types.InlineKeyboardButton(text=item_name['item4'], callback_data='ref/item4')
-        main.add(item4)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Материнская плата майнинг"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     elif message.text == button_list['case_mining']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item5 = types.InlineKeyboardButton(text=item_name['item5'], callback_data='ref/item5')
-        main.add(item5)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Корпус майнинг"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     # GAME DEVICE MENU
@@ -210,8 +263,16 @@ def main_menu(message):
     # GAME DEVICE SUB-MENU
     if message.text == button_list['gamepad']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item6 = types.InlineKeyboardButton(text=item_name['item6'], callback_data='ref/item6')
-        main.add(item6)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Геймпады"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     # FURN MENU
@@ -226,8 +287,16 @@ def main_menu(message):
     # FURN SUB-MENU
     if message.text == button_list['chair']:
         main = types.InlineKeyboardMarkup(row_width=1)
-        item7 = types.InlineKeyboardButton(text=item_name['item7'], callback_data='ref/item7')
-        main.add(item7)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Кресла"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
     # BACK BUTTON
@@ -253,15 +322,73 @@ def main_menu(message):
                          parse_mode='html', reply_markup=markup)
 
 
-def request(message):
-    request = message.text
-    bot.send_message(message.chat.id, request)
+def lower_func(s):
+    return s.lower()
+
+
+def search_func(message):
+    if message.text == button_list['return']:
+        bot.send_message(message.chat.id, 'Пожалуйста, подождите.')
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+        products = types.KeyboardButton(button_list['products'])
+        search = types.KeyboardButton(button_list['search'])
+        faq = types.KeyboardButton(button_list['faq'])
+        contacts = types.KeyboardButton(button_list['contacts'])
+
+        markup.add(products, search, faq, contacts)
+
+        greet = f'Добро пожаловать в <b>Septem Shop</b> 🔥 <u>{message.from_user.first_name}</u>!\n'
+        bot.send_chat_action(message.chat.id, 'typing')
+        bot.send_animation(message.chat.id, open('media/gif/septemshopgif.gif', 'rb'), caption=greet,
+                           parse_mode='html', reply_markup=markup)
+    else:
+        while message.text != button_list['return']:
+            if (message.text[0:2].lower() == 'ID'.lower()) and message.text[2:].isdigit() and (1 <= int(message.text[2:]) < amount):
+                id_ = int(message.text[2:])
+                item_text = f'<b>{item_name[f"item{id_}"]}</b>\n\n{item_desc[f"item{id_}_desc"]}\n\n' \
+                            f'<b>Цена:</b> {item_price[f"item{id_}_price"]} ₽\n\n' \
+                            f'<b><a href="{item_ref[f"item{id_}_ref"]}">Ссылка на товар</a></b>'
+                if item_ref[f"item{id_}_ref"] != '':
+                    send = bot.send_photo(message.chat.id, open(f'media/images/item{id_}.jpg', 'rb'),
+                                          parse_mode='html', caption=item_text)
+                    bot.register_next_step_handler(send, search_func)
+                    break
+                else:
+                    send = bot.send_photo(message.chat.id, open(f'media/images/item{id_}.jpg', 'rb'),
+                                          parse_mode='html', caption=item_text)
+                    bot.send_message(message.chat.id,
+                                     f'Данный товар еще не был добавлен на площадку <b>Avito</b>.\n'
+                                     f'За покупкой обращаться к <b>менеджеру: </b>@Septemshop_manager',
+                                     parse_mode='html')
+                    bot.register_next_step_handler(send, search_func)
+                    break
+            else:
+                connect = sqlite3.connect('database/products.db')
+                connect.create_function('lower_func', 1, lower_func)
+                cursor = connect.cursor()
+                listed = []
+                for request, in cursor.execute('SELECT name FROM Products WHERE lower_func(name) LIKE lower(?)', [f'%{message.text.lower()}%']):
+                    listed.append(request)
+                connect.commit()
+                if len(listed) == 0:
+                    fail = bot.send_message(message.chat.id, 'Указанный товар не найден.')
+                    bot.register_next_step_handler(fail, search_func)
+                    break
+                else:
+                    main = types.InlineKeyboardMarkup(row_width=1)
+                    for i in range(len(listed)):
+                        id_ = str(*cursor.execute(f'SELECT id FROM Products WHERE name="{listed[i]}"').fetchone())
+                        item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+                        main.add(item_inline)
+                    listed.clear()
+                    send = bot.send_message(message.chat.id, f'Товары найденные по запросу "{message.text}"', reply_markup=main)
+                    bot.register_next_step_handler(send, search_func)
+                    break
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def refs(call):
-    products = 25
-    for i in range(1, products):
+    for i in range(1, amount):
         if call.data == f'ref/item{str(i)}':
             id_ = str(i)
             item_text = f'<b>{item_name[f"item{id_}"]}</b>\n\n{item_desc[f"item{id_}_desc"]}\n\n' \

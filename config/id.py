@@ -110,9 +110,11 @@ button_list = {
 connect.commit()
 
 item_name = {}
-amount = 25
+product_list = []
+amount = 28
 for i in range(1, amount):
     values = [f'item{str(i)}', str(*cursor.execute(f'SELECT name FROM Products WHERE id = {i}').fetchone())]
+    product_list.append(str(*cursor.execute(f'SELECT name FROM Products WHERE id = {i}').fetchone()))
     item_name.update([values])
 
 
@@ -132,4 +134,3 @@ item_ref = {}
 for i in range(1, amount):
     values = [f'item{str(i)}_ref', str(*cursor.execute(f'SELECT ref FROM Products WHERE id = {i}').fetchone())]
     item_ref.update([values])
-
