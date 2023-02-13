@@ -94,6 +94,7 @@ button_list = {
     # SUB CATEGORIES (COMP MINING)
     'motherboard_mining': '✳️ Материнские платы',
     'case_mining': '🧰 Корпусы',
+    'videocard_mining': '📺 Видеокарты',
 
     # SUB CATEGORIES (COMP PC)
     'motherboard': '🟨 Материнские платы',
@@ -111,7 +112,7 @@ connect.commit()
 
 item_name = {}
 product_list = []
-amount = 28
+amount = int(*cursor.execute('SELECT id FROM Products ORDER BY id DESC LIMIT 1;').fetchone()) + 1
 for i in range(1, amount):
     values = [f'item{str(i)}', str(*cursor.execute(f'SELECT name FROM Products WHERE id = {i}').fetchone())]
     product_list.append(str(*cursor.execute(f'SELECT name FROM Products WHERE id = {i}').fetchone()))

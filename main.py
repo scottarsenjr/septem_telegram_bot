@@ -92,12 +92,12 @@ def main_menu(message):
     if message.text == button_list['perf']:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         monitor = types.KeyboardButton(button_list['monitor'])
-        # mouse = types.KeyboardButton(button_list['mouse'])
+        mouse = types.KeyboardButton(button_list['mouse'])
         keyboard = types.KeyboardButton(button_list['keyboard'])
         headphones = types.KeyboardButton(button_list['headphones'])
         back = types.KeyboardButton(button_list['back_product'])
 
-        markup.add(monitor, keyboard, headphones, back)
+        markup.add(monitor, keyboard, headphones, mouse, back)
         bot.send_message(message.chat.id, 'Выберите подкатегорию для категории "Периферия"',
                          parse_mode='html', reply_markup=markup)
 
@@ -144,6 +144,20 @@ def main_menu(message):
             main.add(item_inline)
         bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
 
+    elif message.text == button_list['mouse']:
+        main = types.InlineKeyboardMarkup(row_width=1)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Компьютерная мышь"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
+        bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
+
     # COMP MENU
     if message.text == button_list['comp']:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -160,8 +174,9 @@ def main_menu(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         motherboard = types.KeyboardButton(button_list['motherboard_mining'])
         case = types.KeyboardButton(button_list['case_mining'])
+        videocard = types.KeyboardButton(button_list['videocard_mining'])
         back = types.KeyboardButton(button_list['back_product_comp'])
-        markup.add(motherboard, case, back)
+        markup.add(motherboard, case, videocard, back)
 
         bot.send_message(message.chat.id, 'Выберите подкатегорию "Комплектующие для майнинга"',
                          parse_mode='html', reply_markup=markup)
@@ -242,6 +257,20 @@ def main_menu(message):
         cursor = connect.cursor()
         listed = []
         for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Корпус майнинг"'):
+            listed.append(request)
+        connect.commit()
+        for i in range(len(listed)):
+            id_ = str(listed[i])
+            item_inline = types.InlineKeyboardButton(text=item_name[f'item{id_}'], callback_data=f'ref/item{id_}')
+            main.add(item_inline)
+        bot.send_message(message.chat.id, 'Выберите товар из списка', reply_markup=main)
+
+    elif message.text == button_list['videocard_mining']:
+        main = types.InlineKeyboardMarkup(row_width=1)
+        connect = sqlite3.connect('database/products.db')
+        cursor = connect.cursor()
+        listed = []
+        for request, in cursor.execute('SELECT id FROM Products WHERE sub_category="Видеокарта майнинг"'):
             listed.append(request)
         connect.commit()
         for i in range(len(listed)):
